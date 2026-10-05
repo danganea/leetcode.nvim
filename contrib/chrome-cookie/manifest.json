@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "leetcode.nvim cookie",
+  "version": "1.0.0",
+  "description": "Copies your leetcode.com session cookie in the format :Leet cookie update expects.",
+  "permissions": ["cookies", "clipboardWrite"],
+  "host_permissions": ["https://leetcode.com/*"],
+  "action": {
+    "default_title": "Copy LeetCode cookie for leetcode.nvim",
+    "default_popup": "popup.html"
+  }
+}
