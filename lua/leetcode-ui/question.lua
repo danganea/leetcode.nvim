@@ -69,17 +69,20 @@ end
 function Question:path()
     local lang = utils.get_lang(self.lang)
     local alt = lang.alt and ("." .. lang.alt) or ""
+    -- id and slug come from the API and end up in a file name: no path separators.
+    local id = tostring(self.q.frontend_id):gsub("[/\\]", "_")
+    local slug = tostring(self.q.title_slug):gsub("[/\\]", "_")
 
     -- handle legacy file names first
     local fn_legacy = --
-        ("%s.%s-%s.%s"):format(self.q.frontend_id, self.q.title_slug, lang.slug, lang.ft)
+        ("%s.%s-%s.%s"):format(id, slug, lang.slug, lang.ft)
     self.file = config.storage.home:joinpath(fn_legacy)
 
     if self.file:exists() then
         return self.file:absolute(), true
     end
 
-    local fn = ("%s.%s%s.%s"):format(self.q.frontend_id, self.q.title_slug, alt, lang.ft)
+    local fn = ("%s.%s%s.%s"):format(id, slug, alt, lang.ft)
     self.file = config.storage.home:joinpath(fn)
     local existed = self.file:exists()
 

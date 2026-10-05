@@ -299,19 +299,9 @@ function cmd.open()
         if vim.ui.open then
             vim.ui.open(q.cache.link)
         else
-            local command
-            local os_name = vim.loop.os_uname().sysname
-
-            if os_name == "Linux" then
-                command = string.format("xdg-open '%s'", q.cache.link)
-            elseif os_name == "Darwin" then
-                command = string.format("open '%s'", q.cache.link)
-            else
-                -- Fallback to Windows if uname is not available or does not match Linux/Darwin.
-                command = string.format("start \"\" \"%s\"", q.cache.link)
-            end
-
-            vim.fn.jobstart(command, { detach = true })
+            local opener = ({ Linux = { "xdg-open" }, Darwin = { "open" } })[vim.loop.os_uname().sysname]
+                or { "cmd", "/c", "start", "" }
+            vim.fn.jobstart(vim.list_extend(opener, { q.cache.link }), { detach = true })
         end
     end
 end
