@@ -24,7 +24,9 @@ function Cookie.set(str)
         return cerr
     end
 
-    file:write(str, "w")
+    file:write(str, "w", tonumber("600", 8))
+    -- The mode above only applies when the file is created; tighten existing ones too.
+    vim.uv.fs_chmod(file:absolute(), tonumber("600", 8))
     local auth_api = require("leetcode.api.auth")
     local _, aerr = auth_api.user()
 

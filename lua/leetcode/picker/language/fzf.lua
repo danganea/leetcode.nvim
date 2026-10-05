@@ -8,13 +8,12 @@ local deli = "\t"
 return function(question, cb)
     local items = language_picker.items(question.q.code_snippets)
 
+    local entries = {}
     for i, item in ipairs(items) do
-        local md = vim.inspect({ slug = item.value.t.slug, lang = item.value.t.lang })
-            :gsub("\n", "")
-        items[i] = table.concat({ Picker.normalize({ item })[1], md }, deli)
+        entries[i] = table.concat({ Picker.normalize({ item })[1], tostring(i) }, deli)
     end
 
-    fzf.fzf_exec(items, {
+    fzf.fzf_exec(entries, {
         prompt = t("Available Languages") .. "> ",
         winopts = {
             height = language_picker.height,
@@ -27,8 +26,15 @@ return function(question, cb)
         },
         actions = {
             ["default"] = function(selected)
-                local md = Picker.hidden_field(selected[1], deli)
-                language_picker.select(load("return " .. md)(), question, cb)
+                local item = items[tonumber(Picker.hidden_field(selected[1], deli))]
+                if item then
+                    local snippet = item.value.t
+                    language_picker.select(
+                        { slug = snippet.slug, lang = snippet.lang },
+                        question,
+                        cb
+                    )
+                end
             end,
         },
     })

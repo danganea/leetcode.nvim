@@ -64,6 +64,8 @@ function config.setup()
 
     config.storage.cache = P:new(config.user.storage.cache) ---@diagnostic disable-line
     config.storage.cache:mkdir()
+    -- Holds the session cookie and the last submitted code: owner-only.
+    vim.uv.fs_chmod(config.storage.cache:absolute(), tonumber("700", 8))
 
     for _, plug_load_fn in ipairs(lazy_plugs) do
         plug_load_fn()
